@@ -1,0 +1,9 @@
+= もしVagrantで環境を構築したかったら
+
+----
+$ make up
+$ make ssh
+VM上で
+$ git XXXX
+$ cd XXXX
+----
