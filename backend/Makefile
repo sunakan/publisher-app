@@ -2,38 +2,73 @@ export TMP_HOME=${PWD}/tmp/tmp-home
 export TMP_GOPATH_CACHE=${PWD}/tmp/GOPATH_CACHE
 
 export DOCKER_GO_TAG=1.14-alpine
+export DOCKER_ALPINE_TAG=3
 export APP_DOCKER_REPOSITORY=izukom/publisher-backend
 
-.PHONY: setup-dev-env
-setup-dev-env:
-	mkdir --parents ${TMP_HOME}
-	mkdir --parents ${TMP_GOPATH_CACHE}
+#.PHONY: setup-dev-env
+#setup-dev-env:
+#	mkdir --parents ${TMP_HOME}
+#	mkdir --parents ${TMP_GOPATH_CACHE}
 
 .PHONY: build
 build:
 	docker build ./ \
 		--build-arg DOCKER_GO_TAG=${DOCKER_GO_TAG} \
+		--target builder \
 		--tag ${APP_DOCKER_REPOSITORY}:latest
 
+.PHONY: build-production
+build-production:
+	docker build ./ \
+		--build-arg DOCKER_GO_TAG=${DOCKER_GO_TAG} \
+		--build-arg DOCKER_ALPINE_TAG=${DOCKER_ALPINE_TAG} \
+		--target production \
+		--tag ${APP_DOCKER_REPOSITORY}:production
+
 .PHONY: ash
-ash: setup-dev-env
+ash:# setup-dev-env
 	docker run \
 		--rm \
 		--interactive \
 		--tty \
-		--user `id -u`:`id -g` \
 		--hostname publisher-backend \
 		--name publisher-backend \
 		--publish 8080:8080 \
 		--env PORT=8080 \
 		--env HOME=/usr/local/tmp-home/ \
-		--mount type=bind,source=${TMP_HOME}/,target=/usr/local/tmp-home/ \
-		--mount type=bind,source=${TMP_GOPATH_CACHE}/,target=/go/src/ \
-		--mount type=bind,source=${PWD}/go-app/,target=/usr/local/go-app/ \
-		--workdir /usr/local/go-app/ \
+		--mount type=bind,source=${PWD}/go-app/,target=/go/src/github.com/sunakan/publisher-app/backend/go-app/ \
+		--workdir /go/src/github.com/sunakan/publisher-app/backend/go-app/ \
 		${APP_DOCKER_REPOSITORY}:latest \
 		ash
 
-.PHONY: clean-complete
-clean-complete:
-	rm -rf tmp/
+# デバッグ用
+#		--mount type=bind,source=${TMP_HOME}/,target=/usr/local/tmp-home/ \
+#		--mount type=bind,source=${TMP_GOPATH_CACHE}/,target=/go/src/ \
+#		--user `id -u`:`id -g` \
+
+################################################################################
+# デプロイ
+# TODO ファイル分割
+################################################################################
+export HEROKU_APP_NAME=publisher-api
+.PHONY: h-login
+h-login:
+	heroku login --interactive
+.PHONY: h-container-login
+h-container-login:
+	heroku container:login
+.PHONY: h-create-app
+h-create-app:
+	heroku apps | grep ${HEROKU_APP_NAME} || heroku create ${HEROKU_APP_NAME}
+.PHONY: h-add-app-for-git
+h-add-app-for-git:
+	heroku git:remote --app ${HEROKU_APP_NAME}
+.PHONY: h-build-production
+h-build-production: h-create-app build-production
+	docker tag ${APP_DOCKER_REPOSITORY}:production registry.heroku.com/${HEROKU_APP_NAME}/web
+.PHONY: h-push
+h-push: h-build-production
+	docker push registry.heroku.com/${HEROKU_APP_NAME}/web
+.PHONY: h-release
+h-release:
+	heroku container:release web
