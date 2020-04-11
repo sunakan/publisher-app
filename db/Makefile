@@ -53,5 +53,5 @@ puml:
 #
 #----------
 # SELECT *
-# FROM publishers
+# FROM publisher
 #----------
