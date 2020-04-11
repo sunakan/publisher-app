@@ -41,6 +41,13 @@ bash:
 		postgres:${DOCKER_POSTGRES_TAG} \
 		bash
 
+puml:
+	docker run \
+		--rm \
+		--detach \
+		--publish 8080:8080 \
+		plantuml/plantuml-server:jetty
+
 #
 # psql --host arjuna.db.elephantsql.com --port 5432 --username yjnwdibd --dbname yjnwdibd
 #
