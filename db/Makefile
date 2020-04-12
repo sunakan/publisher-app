@@ -28,6 +28,48 @@ down:
 		migrate/migrate:${DOCKER_MIGRATE_TAG} \
 		-database ${POSTGRESQL_URL} -path ./migrations down
 
+select-all:
+	docker run \
+		--rm \
+		--interactive \
+		--tty \
+		--hostname pg \
+		--name pg \
+		--mount type=bind,source=${PWD}/,target=/home/pg/ \
+		--workdir /home/pg/ \
+		--env PGPASSWORD=dcDGXTZeORGq77WsBPkRZ9BvFAYiK8_N \
+		postgres:${DOCKER_POSTGRES_TAG} \
+		bash -c \
+			'psql --command "SELECT * FROM publisher;" --host arjuna.db.elephantsql.com --port 5432 --username yjnwdibd --dbname yjnwdibd'
+
+insert-test:
+	docker run \
+		--rm \
+		--interactive \
+		--tty \
+		--hostname pg \
+		--name pg \
+		--mount type=bind,source=${PWD}/,target=/home/pg/ \
+		--workdir /home/pg/ \
+		--env PGPASSWORD=dcDGXTZeORGq77WsBPkRZ9BvFAYiK8_N \
+		postgres:${DOCKER_POSTGRES_TAG} \
+		bash -c \
+			"psql --command \"INSERT INTO publisher (name) VALUES ('技術評論社');\" --host arjuna.db.elephantsql.com --port 5432 --username yjnwdibd --dbname yjnwdibd"
+
+truncate:
+	docker run \
+		--rm \
+		--interactive \
+		--tty \
+		--hostname pg \
+		--name pg \
+		--mount type=bind,source=${PWD}/,target=/home/pg/ \
+		--workdir /home/pg/ \
+		--env PGPASSWORD=dcDGXTZeORGq77WsBPkRZ9BvFAYiK8_N \
+		postgres:${DOCKER_POSTGRES_TAG} \
+		bash -c \
+			"psql --command \"TRUNCATE TABLE publisher;\" --host arjuna.db.elephantsql.com --port 5432 --username yjnwdibd --dbname yjnwdibd"
+
 bash:
 	docker run \
 		--rm \
@@ -40,6 +82,7 @@ bash:
 		--env PGPASSWORD=dcDGXTZeORGq77WsBPkRZ9BvFAYiK8_N \
 		postgres:${DOCKER_POSTGRES_TAG} \
 		bash
+
 
 puml:
 	docker run \
