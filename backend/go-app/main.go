@@ -1,14 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"encoding/json"
 	"net/http"
 	"os"
-	"strconv"
 	"path"
 )
 
 func main() {
+	initDb()
 	server := http.Server{
 		Addr: ":" + os.Getenv("PORT"),
 	}
@@ -21,6 +22,8 @@ func handlePublisher(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		err = getPublisher(w, r)
+	case "POST":
+		err = postPublisher(w, r)
 	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -29,10 +32,7 @@ func handlePublisher(w http.ResponseWriter, r *http.Request) {
 }
 
 func getPublisher(w http.ResponseWriter, r *http.Request) (err error) {
-	id, err := strconv.Atoi(path.Base(r.URL.Path))
-	if err != nil {
-		return
-	}
+	id := path.Base(r.URL.Path)
 	publisher, err := retrievePublisher(id)
 	if err != nil {
 		return
@@ -43,5 +43,21 @@ func getPublisher(w http.ResponseWriter, r *http.Request) (err error) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(output)
+	return
+}
+
+// Create a publisher
+// POST /publisher/
+func postPublisher(w http.ResponseWriter, r *http.Request) (err error) {
+	len := r.ContentLength
+	body := make([]byte, len)
+	r.Body.Read(body)
+	var p Publisher
+	json.Unmarshal(body, &p)
+	err = p.create()
+	if err != nil {
+		return
+	}
+	w.WriteHeader(200)
 	return
 }

@@ -41,6 +41,54 @@ ash:# setup-dev-env
 		${APP_DOCKER_REPOSITORY}:latest \
 		ash
 
+.PHONY: post
+post:
+	curl \
+		--request POST \
+		--header "Content-Type: application/json" \
+		--data '{"name":"達人出版"}' \
+		http://127.0.0.1:8080/publisher/
+	curl \
+		--request POST \
+		--header "Content-Type: application/json" \
+		--data '{"name":"技術評論社"}' \
+		http://127.0.0.1:8080/publisher/
+	curl \
+		--request POST \
+		--header "Content-Type: application/json" \
+		--data '{"name":"オーム社"}' \
+		http://127.0.0.1:8080/publisher/
+	curl \
+		--request POST \
+		--header "Content-Type: application/json" \
+		--data '{"name":"インプレス"}' \
+		http://127.0.0.1:8080/publisher/
+	curl \
+		--request POST \
+		--header "Content-Type: application/json" \
+		--data '{"name":"ラムダノート"}' \
+		http://127.0.0.1:8080/publisher/
+	curl \
+		--request POST \
+		--header "Content-Type: application/json" \
+		--data '{"name":"翔泳社"}' \
+		http://127.0.0.1:8080/publisher/
+	curl \
+		--request POST \
+		--header "Content-Type: application/json" \
+		--data '{"name":"秀和システム"}' \
+		http://127.0.0.1:8080/publisher/
+	curl \
+		--request POST \
+		--header "Content-Type: application/json" \
+		--data '{"name":"オライリージャパン"}' \
+		http://127.0.0.1:8080/publisher/
+	curl \
+		--request POST \
+		--header "Content-Type: application/json" \
+		--data '{"name":"KADOKAWA"}' \
+		http://127.0.0.1:8080/publisher/
+
 # デバッグ用
 #		--mount type=bind,source=${TMP_HOME}/,target=/usr/local/tmp-home/ \
 #		--mount type=bind,source=${TMP_GOPATH_CACHE}/,target=/go/src/ \
