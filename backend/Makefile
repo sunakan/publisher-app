@@ -41,53 +41,55 @@ ash:# setup-dev-env
 		${APP_DOCKER_REPOSITORY}:latest \
 		ash
 
+#export APP_URL=http://127.0.0.1:8080
+export APP_URL=https://publisher-api.herokuapp.com
 .PHONY: post
 post:
 	curl \
 		--request POST \
 		--header "Content-Type: application/json" \
 		--data '{"name":"達人出版"}' \
-		http://127.0.0.1:8080/publisher/
+		${APP_URL}/publisher/
 	curl \
 		--request POST \
 		--header "Content-Type: application/json" \
 		--data '{"name":"技術評論社"}' \
-		http://127.0.0.1:8080/publisher/
+		${APP_URL}/publisher/
 	curl \
 		--request POST \
 		--header "Content-Type: application/json" \
 		--data '{"name":"オーム社"}' \
-		http://127.0.0.1:8080/publisher/
+		${APP_URL}/publisher/
 	curl \
 		--request POST \
 		--header "Content-Type: application/json" \
 		--data '{"name":"インプレス"}' \
-		http://127.0.0.1:8080/publisher/
+		${APP_URL}/publisher/
 	curl \
 		--request POST \
 		--header "Content-Type: application/json" \
 		--data '{"name":"ラムダノート"}' \
-		http://127.0.0.1:8080/publisher/
+		${APP_URL}/publisher/
 	curl \
 		--request POST \
 		--header "Content-Type: application/json" \
 		--data '{"name":"翔泳社"}' \
-		http://127.0.0.1:8080/publisher/
+		${APP_URL}/publisher/
 	curl \
 		--request POST \
 		--header "Content-Type: application/json" \
 		--data '{"name":"秀和システム"}' \
-		http://127.0.0.1:8080/publisher/
+		${APP_URL}/publisher/
 	curl \
 		--request POST \
 		--header "Content-Type: application/json" \
 		--data '{"name":"オライリージャパン"}' \
-		http://127.0.0.1:8080/publisher/
+		${APP_URL}/publisher/
 	curl \
 		--request POST \
 		--header "Content-Type: application/json" \
 		--data '{"name":"KADOKAWA"}' \
-		http://127.0.0.1:8080/publisher/
+		${APP_URL}/publisher/
 
 # デバッグ用
 #		--mount type=bind,source=${TMP_HOME}/,target=/usr/local/tmp-home/ \
