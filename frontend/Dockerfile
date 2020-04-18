@@ -9,12 +9,12 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini \
   /usr/local/bin/tini
 RUN chmod +x /usr/local/bin/tini
 EXPOSE 3000
-WORKDIR /home/node/app
-RUN chown node:node --recursive /home/node/app
+WORKDIR /home/node/app/
+RUN chown node:node --recursive /home/node/app/
 USER node
-#COPY --chown=node:node package.json package-lock.json ./
-#RUN npm ci \
-#  && npm cache clean --force
+COPY --chown=node:node app/package*.json ./
+RUN npm ci \
+  && npm cache clean --force
 
 ################################################################################
 # Development
@@ -27,3 +27,11 @@ CMD ["npm", "run", "dev"]
 ################################################################################
 # Production
 ################################################################################
+FROM base as source
+COPY --chown=node:node app/* ./
+
+FROM source as production
+ENV NODE_ENV production
+RUN npm run build
+ENTRYPOINT ["tini", "--"]
+CMD ["npm","run", "start"]

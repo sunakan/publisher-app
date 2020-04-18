@@ -1,0 +1,19 @@
+{
+  "private": "true",
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next --port ${PORT:-3000}",
+    "build": "next build",
+    "start": "next start --port ${PORT:-3000}"
+  },
+  "keywords": [],
+  "author": "sunakan",
+  "dependencies": {
+    "next": "^9.3.5",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
