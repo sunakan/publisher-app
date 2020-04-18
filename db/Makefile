@@ -1,6 +1,6 @@
 export DOCKER_MIGRATE_TAG=v4.10.0
 export DOCKER_POSTGRES_TAG=12
-export POSTGRESQL_URL='postgres://yjnwdibd:dcDGXTZeORGq77WsBPkRZ9BvFAYiK8_N@arjuna.db.elephantsql.com:5432/yjnwdibd'
+export POSTGRESQL_URL="postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}"
 
 up:
 	docker run \
@@ -37,10 +37,10 @@ select-all:
 		--name pg \
 		--mount type=bind,source=${PWD}/,target=/home/pg/ \
 		--workdir /home/pg/ \
-		--env PGPASSWORD=dcDGXTZeORGq77WsBPkRZ9BvFAYiK8_N \
+		--env PGPASSWORD=${DB_PASSWORD} \
 		postgres:${DOCKER_POSTGRES_TAG} \
 		bash -c \
-			'psql --command "SELECT * FROM publisher;" --host arjuna.db.elephantsql.com --port 5432 --username yjnwdibd --dbname yjnwdibd'
+			'psql --command "SELECT * FROM publisher;" --host ${DB_HOST} --port 5432 --username ${DB_USER} --dbname ${DB_NAME}'
 
 insert-test:
 	docker run \
@@ -51,10 +51,10 @@ insert-test:
 		--name pg \
 		--mount type=bind,source=${PWD}/,target=/home/pg/ \
 		--workdir /home/pg/ \
-		--env PGPASSWORD=dcDGXTZeORGq77WsBPkRZ9BvFAYiK8_N \
+		--env PGPASSWORD=${DB_PASSWORD} \
 		postgres:${DOCKER_POSTGRES_TAG} \
 		bash -c \
-			"psql --command \"INSERT INTO publisher (name) VALUES ('技術評論社');\" --host arjuna.db.elephantsql.com --port 5432 --username yjnwdibd --dbname yjnwdibd"
+			"psql --command \"INSERT INTO publisher (name) VALUES ('技術評論社');\" --host ${DB_HOST} --port 5432 --username ${DB_USER} --dbname ${DB_NAME}"
 
 truncate:
 	docker run \
@@ -65,10 +65,10 @@ truncate:
 		--name pg \
 		--mount type=bind,source=${PWD}/,target=/home/pg/ \
 		--workdir /home/pg/ \
-		--env PGPASSWORD=dcDGXTZeORGq77WsBPkRZ9BvFAYiK8_N \
+		--env PGPASSWORD=${DB_PASSWORD} \
 		postgres:${DOCKER_POSTGRES_TAG} \
 		bash -c \
-			"psql --command \"TRUNCATE TABLE publisher;\" --host arjuna.db.elephantsql.com --port 5432 --username yjnwdibd --dbname yjnwdibd"
+			"psql --command \"TRUNCATE TABLE publisher;\" --host ${DB_HOST} --port 5432 --username ${DB_USER} --dbname ${DB_NAME}"
 
 bash:
 	docker run \
@@ -79,10 +79,9 @@ bash:
 		--name pg \
 		--mount type=bind,source=${PWD}/,target=/home/pg/ \
 		--workdir /home/pg/ \
-		--env PGPASSWORD=dcDGXTZeORGq77WsBPkRZ9BvFAYiK8_N \
+		--env PGPASSWORD=${DB_PASSWORD} \
 		postgres:${DOCKER_POSTGRES_TAG} \
 		bash
-
 
 puml:
 	docker run \
@@ -90,11 +89,3 @@ puml:
 		--detach \
 		--publish 8080:8080 \
 		plantuml/plantuml-server:jetty
-
-#
-# psql --host arjuna.db.elephantsql.com --port 5432 --username yjnwdibd --dbname yjnwdibd
-#
-#----------
-# SELECT *
-# FROM publisher
-#----------
